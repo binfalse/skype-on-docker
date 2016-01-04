@@ -12,9 +12,6 @@ RUN dpkg --add-architecture i386
 RUN useradd -m -d /home/docker docker && \
     mkdir -p /var/run/sshd \
              /root/.ssh /home/docker/.ssh
-COPY authorized_keys /root/.ssh/
-COPY authorized_keys /home/docker/.ssh/
-
 # Install dependencies:
 #  openssh-server as we connect to the container via SSH
 #  wget to download skype
@@ -30,7 +27,10 @@ RUN wget http://download.skype.com/linux/skype-debian_4.3.0.37-1_i386.deb -O /us
 RUN dpkg -i /usr/src/skype.deb || true
 RUN apt-get install -fy && rm /usr/src/skype.deb
 
+# Configure SSH stuff
 RUN echo X11Forwarding yes >> /etc/ssh/ssh_config
+COPY authorized_keys /root/.ssh/
+COPY authorized_keys /home/docker/.ssh/
 
 # Exposes the ssh port
 EXPOSE 22
